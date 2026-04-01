@@ -1,10 +1,10 @@
-# Claude Buddy Hack
+# CC Buddy Hack
 
-Brute-force your Claude Code `/buddy` companion to get the rarity, species, and traits you want.
+Brute-force your CC `/buddy` companion to get the rarity, species, and traits you want.
 
 ## How it works
 
-Claude Code's `/buddy` system generates a companion pet based on a deterministic hash of your `accountUuid` (OAuth users) or `userID` (API key users). The rarity distribution is:
+CC's `/buddy` system generates a companion pet based on a deterministic hash of your `accountUuid` (OAuth users) or `userID` (API key users). The rarity distribution is:
 
 | Rarity    | Weight | Chance |
 |-----------|--------|--------|
@@ -18,11 +18,11 @@ Shiny variants have an additional 1% chance on top of rarity.
 
 This project includes:
 - **`brute.ts`** — Brute-force script that generates random UUIDs and finds ones that produce desired rarities
-- **`buddy-patch.sh`** — Wrapper script that temporarily swaps your `accountUuid` before launching Claude Code
+- **`buddy-patch.sh`** — Wrapper script that temporarily swaps your `accountUuid` before launching CC
 
 ## Prerequisites
 
-- [Bun](https://bun.sh/) runtime (required for exact hash matching with Claude Code)
+- [Bun](https://bun.sh/) runtime (required for exact hash matching with CC)
 
 ```bash
 brew install oven-sh/bun/bun
@@ -45,7 +45,7 @@ bun brute.ts epic
 # Other rarities: common, uncommon, rare, epic, legendary
 ```
 
-### 2. Launch Claude Code with the desired companion
+### 2. Launch CC with the desired companion
 
 ```bash
 # Use the default UUID (edit buddy-patch.sh to set your preferred one)
@@ -57,7 +57,7 @@ bun brute.ts epic
 
 ### 3. Hatch your new companion
 
-Once Claude Code starts, run `/buddy` to hatch a new companion with your chosen traits.
+Once CC starts, run `/buddy` to hatch a new companion with your chosen traits.
 
 ## How buddy-patch.sh works
 
@@ -79,5 +79,5 @@ duck, goose, blob, cat, dragon, octopus, owl, penguin, turtle, snail, ghost, axo
 
 ## Note
 
-- Must use **Bun** to run `brute.ts` — Node.js uses a different hash function (FNV-1a vs Bun's wyhash), so results won't match Claude Code
-- The salt `friend-2026-401` is hardcoded in Claude Code and may change in future versions
+- Must use **Bun** to run `brute.ts` — Node.js uses a different hash function (FNV-1a vs Bun's wyhash), so results won't match CC
+- The salt `friend-2026-401` is hardcoded in CC and may change in future versions

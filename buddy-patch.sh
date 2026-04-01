@@ -8,10 +8,17 @@ CONFIG="$HOME/.claude.json"
 # 解析参数
 RENEW=false
 TARGET_ID=""
+CLAUDE_ARGS=()
 for arg in "$@"; do
   case "$arg" in
     --renew) RENEW=true ;;
-    *) [ -z "$TARGET_ID" ] && TARGET_ID="$arg" ;;
+    *)
+      if [ -z "$TARGET_ID" ]; then
+        TARGET_ID="$arg"
+      else
+        CLAUDE_ARGS+=("$arg")
+      fi
+      ;;
   esac
 done
 TARGET_ID="${TARGET_ID:-d85d758c-c040-4a19-876d-578e72aa7bc3}"
@@ -35,7 +42,7 @@ ORIGINAL_UUID=$(grep -o '"accountUuid": "[^"]*"' "$CONFIG" | head -1 | sed 's/"a
 
 if [ -z "$ORIGINAL_UUID" ]; then
   echo "未找到 accountUuid，直接启动 claude"
-  exec claude "$@"
+  exec claude "${CLAUDE_ARGS[@]}"
 fi
 
 echo "=== Buddy Patch ==="
@@ -79,4 +86,4 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 # 启动 claude（传递所有参数）
-claude "$@"
+claude "${CLAUDE_ARGS[@]}"

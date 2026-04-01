@@ -2,6 +2,16 @@
 
 Brute-force your CC `/buddy` companion to get the rarity, species, and traits you want.
 
+## Gallery
+
+<p align="center">
+  <img src="buddys-pics/dragon-nacreblur.png" width="200" alt="Shiny Legendary Dragon">
+  <img src="buddys-pics/cactus-tuffwick.png" width="200" alt="Shiny Legendary Cactus">
+  <img src="buddys-pics/cactus-jamber.png" width="200" alt="Shiny Legendary Cactus">
+  <img src="buddys-pics/goose-siltica.png" width="200" alt="Shiny Legendary Goose">
+  <img src="buddys-pics/owl-glintcrumb.png" width="200" alt="Shiny Legendary Owl">
+</p>
+
 ## Example: Finding the Perfect Shiny Legendary Dragon
 
 ```

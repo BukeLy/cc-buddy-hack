@@ -2,6 +2,50 @@
 
 Brute-force your CC `/buddy` companion to get the rarity, species, and traits you want.
 
+## Example: Finding the Perfect Shiny Legendary Dragon
+
+```
+$ bun brute.ts legendary dragon --shiny --best
+目标: legendary + SHINY + dragon
+最大搜索次数: 100,000,000
+运行时: Bun (hash 精确匹配)
+---
+[TOP 1] total=338 dragon (×) hat:wizard ✨ | 0.1s | #154,447
+  DEBUGGING=60 PATIENCE=41 CHAOS=53 WISDOM=84 SNARK=100
+[TOP 1] total=349 dragon (°) hat:tinyduck ✨ | 0.1s | #181,044
+  DEBUGGING=76 PATIENCE=41 CHAOS=76 WISDOM=56 SNARK=100
+[TOP 1] total=370 dragon (◉) hat:none ✨ | 0.3s | #679,915
+  DEBUGGING=54 PATIENCE=89 CHAOS=40 WISDOM=87 SNARK=100
+[TOP 1] total=400 dragon (@) hat:tophat ✨ | 0.6s | #1,581,984
+  DEBUGGING=45 PATIENCE=87 CHAOS=100 WISDOM=89 SNARK=79
+...
+[TOP 1] total=415 dragon (◉) hat:tophat ✨ | 17.8s | #49,298,662
+  DEBUGGING=100 PATIENCE=52 CHAOS=89 WISDOM=87 SNARK=87
+...
+===== Done =====
+Searched: 100,000,000 | Time: 36.62s | Found: 10 legendary
+
+Results:
+  976ff944-b631-4326-a3a8-19cfbdb2d520  =>  dragon (◉) hat:tophat SHINY total=415
+  adc58f2f-0380-48da-858a-2a18d55f97aa  =>  dragon (◉) hat:wizard SHINY total=405
+  2aaf2daf-fd36-4cc0-96af-f72da52d3125  =>  dragon (◉) hat:propeller SHINY total=405
+  7cb533ed-9301-4863-a9b3-f828813ff16c  =>  dragon (✦) hat:tinyduck SHINY total=403
+  e4235272-0ed3-4fce-89b6-fe12022a70d1  =>  dragon (@) hat:tophat SHINY total=400
+```
+
+The `--best` flag searches through all 100M UUIDs and keeps the top 10 by total stats. In this run, the best shiny legendary dragon scored **415/421** (theoretical max) — just 6 points short of perfection.
+
+### Stats breakdown
+
+Each companion has 5 stats. The roll algorithm always picks one **peak** stat (boosted) and one **dump** stat (penalized):
+
+| Stat | Legendary range |
+|------|----------------|
+| Peak | always 100 |
+| Normal (×3) | 50–89 each |
+| Dump | 40–54 |
+| **Theoretical max** | **421** |
+
 ## How it works
 
 CC's `/buddy` system generates a companion pet based on a deterministic hash of your `accountUuid` (OAuth users) or `userID` (API key users). The rarity distribution is:

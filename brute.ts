@@ -109,6 +109,7 @@ function rollFull(userId: string) {
 const isBun = typeof Bun !== 'undefined'
 const targetRarity = (process.argv[2] || 'legendary') as Rarity
 const shinyOnly = process.argv.includes('--shiny')
+const targetSpecies = process.argv.find(a => (SPECIES as readonly string[]).includes(a) && a !== process.argv[2]) || null
 const maxAttempts = parseInt(process.argv.find(a => /^\d+$/.test(a) && a !== process.argv[2]) || '100000000', 10)
 
 if (!RARITIES.includes(targetRarity)) {
@@ -117,7 +118,7 @@ if (!RARITIES.includes(targetRarity)) {
   process.exit(1)
 }
 
-console.log(`目标: ${targetRarity}${shinyOnly ? ' + SHINY' : ''}`)
+console.log(`目标: ${targetRarity}${shinyOnly ? ' + SHINY' : ''}${targetSpecies ? ' + ' + targetSpecies : ''}`)
 console.log(`最大搜索次数: ${maxAttempts.toLocaleString()}`)
 console.log(`运行时: ${isBun ? 'Bun (hash 精确匹配)' : 'Node (hash 不匹配, 仅供测试)'}`)
 console.log(`---`)
@@ -140,7 +141,7 @@ for (let i = 0; i < maxAttempts; i++) {
   const roll = rollFull(userId)
   checked++
 
-  if (roll.rarity === targetRarity && (!shinyOnly || roll.shiny)) {
+  if (roll.rarity === targetRarity && (!shinyOnly || roll.shiny) && (!targetSpecies || roll.species === targetSpecies)) {
     results.push({ userId, ...roll })
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1)
     const shinyTag = roll.shiny ? ' SHINY!' : ''

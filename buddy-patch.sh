@@ -4,7 +4,31 @@
 # 退出后自动还原
 
 CONFIG="$HOME/.claude.json"
-TARGET_ID="${1:-d85d758c-c040-4a19-876d-578e72aa7bc3}"
+
+# 解析参数
+RENEW=false
+TARGET_ID=""
+for arg in "$@"; do
+  case "$arg" in
+    --renew) RENEW=true ;;
+    *) [ -z "$TARGET_ID" ] && TARGET_ID="$arg" ;;
+  esac
+done
+TARGET_ID="${TARGET_ID:-d85d758c-c040-4a19-876d-578e72aa7bc3}"
+
+# --renew: 删除 companion 字段，强制重新孵化
+if [ "$RENEW" = true ]; then
+  if python3 -c "
+import json
+with open('$CONFIG') as f: d = json.load(f)
+if 'companion' in d:
+    del d['companion']
+    with open('$CONFIG', 'w') as f: json.dump(d, f, indent=2, ensure_ascii=False)
+    print('companion 字段已删除，下次 /buddy 将重新孵化')
+else:
+    print('companion 字段不存在，无需操作')
+"; then true; fi
+fi
 
 # 读取原始 UUID
 ORIGINAL_UUID=$(grep -o '"accountUuid": "[^"]*"' "$CONFIG" | head -1 | sed 's/"accountUuid": "//;s/"//')

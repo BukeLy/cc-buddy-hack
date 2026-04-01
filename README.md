@@ -12,10 +12,6 @@ Brute-force your CC `/buddy` companion to get the rarity, species, and traits yo
   <img src="buddys-pics/owl-glintcrumb.png" width="150" alt="Shiny Legendary Owl">
 </p>
 
-## Demo
-
-![demo](buddys-pics/demo.gif)
-
 ## Example: Finding the Perfect Shiny Legendary Dragon
 
 ```

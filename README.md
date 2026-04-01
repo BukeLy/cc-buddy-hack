@@ -39,8 +39,11 @@ bun brute.ts legendary
 # Find shiny legendary companions
 bun brute.ts legendary --shiny
 
-# Find epic companions
-bun brute.ts epic
+# Filter by species (e.g. dragon, cat, ghost...)
+bun brute.ts legendary dragon --shiny
+
+# Find the highest total stats (searches all 100M and keeps top 10)
+bun brute.ts legendary dragon --shiny --best
 
 # Other rarities: common, uncommon, rare, epic, legendary
 ```
@@ -53,6 +56,9 @@ bun brute.ts epic
 
 # Or specify a UUID directly
 ./buddy-patch.sh <uuid-from-step-1>
+
+# Use --renew to delete your current companion and force a re-hatch
+./buddy-patch.sh <uuid> --renew
 ```
 
 ### 3. Hatch your new companion

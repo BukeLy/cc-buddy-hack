@@ -73,6 +73,7 @@ Shiny variants have an additional 1% chance on top of rarity.
 This project includes:
 - **`brute.ts`** — Brute-force script that generates random UUIDs and finds ones that produce desired rarities
 - **`buddy-patch.sh`** — Wrapper script that permanently swaps your `accountUuid` before launching CC (use `--recover-userid` to restore)
+- **`buddy-cn.sh`** — Localize your companion's personality to Chinese using Claude CLI
 
 ## Prerequisites
 
@@ -119,7 +120,15 @@ bun brute.ts legendary dragon --shiny --best
 
 Once CC starts, run `/buddy` to hatch a new companion with your chosen traits.
 
-### 4. Restore your original UUID (optional)
+### 4. Localize your companion to Chinese (optional)
+
+```bash
+./buddy-cn.sh
+```
+
+This calls `claude -p` to translate your companion's personality description to Mandarin and adds a directive to always speak in Chinese. Takes effect immediately.
+
+### 5. Restore your original UUID (optional)
 
 The patch is **permanent** — your `accountUuid` stays replaced after exiting CC. To restore:
 

@@ -39,13 +39,9 @@ EOF
 
 # 检查依赖
 check_deps() {
-  local missing=()
-  command -v claude &>/dev/null || missing+=(claude)
-  command -v python3 &>/dev/null || missing+=(python3)
-  if [ ${#missing[@]} -gt 0 ]; then
-    echo "错误: 缺少依赖: ${missing[*]}"
-    echo "  - claude: brew install claude 或参考 https://docs.anthropic.com"
-    echo "  - python3: brew install python3"
+  if ! command -v claude &>/dev/null; then
+    echo "错误: 未找到 claude 命令"
+    echo "安装: npm install -g @anthropic-ai/claude-code"
     exit 1
   fi
 }
@@ -123,16 +119,24 @@ fi
 
 # --renew: 删除 companion 字段，强制重新孵化
 if [ "$RENEW" = true ]; then
-  python3 -c "
-import json, sys
-with open('$CONFIG') as f: d = json.load(f)
-if 'companion' in d:
-    del d['companion']
-    with open('$CONFIG', 'w') as f: json.dump(d, f, indent=2, ensure_ascii=False)
-    print('companion 字段已删除，下次 /buddy 将重新孵化')
-else:
-    print('companion 字段不存在，无需操作')
-"
+  if grep -q '"companion"' "$CONFIG"; then
+    # 用 awk 删除 "companion": { ... } 块并处理逗号
+    awk '
+      /"companion"/ { skip=1; next }
+      skip && /^  }/ { skip=0; next }
+      skip { next }
+      { print }
+    ' "$CONFIG" > "$CONFIG.tmp" && mv "$CONFIG.tmp" "$CONFIG"
+    # 修复尾部逗号: },\n} -> }\n}
+    awk '
+      prev { if (/^}/) { gsub(/,$/, "", prev) }; print prev }
+      { prev=$0 }
+      END { print prev }
+    ' "$CONFIG" > "$CONFIG.tmp" && mv "$CONFIG.tmp" "$CONFIG"
+    echo "companion 字段已删除，下次 /buddy 将重新孵化"
+  else
+    echo "companion 字段不存在，无需操作"
+  fi
 fi
 
 # 读取原始 UUID

@@ -79,13 +79,7 @@ This project includes:
 ## Quick Start
 
 ```bash
-# Install Bun (required)
-brew install oven-sh/bun/bun
-
-# Clone and run
-git clone https://github.com/BukeLy/cc-buddy-hack.git
-cd cc-buddy-hack
-./buddy-setup.sh
+brew install oven-sh/bun/bun && git clone https://github.com/BukeLy/cc-buddy-hack.git && cd cc-buddy-hack && ./buddy-setup.sh
 ```
 
 The setup script will:

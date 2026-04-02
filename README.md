@@ -72,7 +72,7 @@ Shiny variants have an additional 1% chance on top of rarity.
 
 This project includes:
 - **`brute.ts`** — Brute-force script that generates random UUIDs and finds ones that produce desired rarities
-- **`buddy-patch.sh`** — Wrapper script that temporarily swaps your `accountUuid` before launching CC
+- **`buddy-patch.sh`** — Wrapper script that permanently swaps your `accountUuid` before launching CC (use `--recover-userid` to restore)
 
 ## Prerequisites
 
@@ -119,11 +119,19 @@ bun brute.ts legendary dragon --shiny --best
 
 Once CC starts, run `/buddy` to hatch a new companion with your chosen traits.
 
+### 4. Restore your original UUID (optional)
+
+The patch is **permanent** — your `accountUuid` stays replaced after exiting CC. To restore:
+
+```bash
+./buddy-patch.sh --recover-userid
+```
+
 ## How buddy-patch.sh works
 
-1. **Before launch**: Replaces `accountUuid` in `~/.claude.json` with the target UUID
+1. **Before launch**: Saves the original `accountUuid` to `~/.claude-buddy-original-uuid`, then replaces it in `~/.claude.json` with the target UUID
 2. **During session**: Background watcher re-patches every 2s (in case OAuth token refresh restores the original)
-3. **On exit** (including Ctrl+C): Automatically restores the original `accountUuid`
+3. **On exit**: The target UUID is **kept** (no auto-restore). Use `--recover-userid` to manually restore the original
 
 OAuth authentication uses tokens (stored in keychain), not `accountUuid`, so API calls are unaffected.
 

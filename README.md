@@ -56,9 +56,9 @@ Each companion has 5 stats. The roll algorithm always picks one **peak** stat (b
 | Dump | 40–54 |
 | **Theoretical max** | **421** |
 
-## How it works
+## Rarity distribution
 
-CC's `/buddy` system generates a companion pet based on a deterministic hash of your `accountUuid` (OAuth users) or `userID` (API key users). The rarity distribution is:
+CC's `/buddy` system generates a companion pet based on a deterministic hash of your `accountUuid`. The rarity distribution is:
 
 | Rarity    | Weight | Chance |
 |-----------|--------|--------|
@@ -136,13 +136,44 @@ The patch is **permanent** — your `accountUuid` stays replaced after exiting C
 ./buddy-patch.sh --recover-userid
 ```
 
-## How buddy-patch.sh works
+## How it works in detail
 
-1. **Before launch**: Saves the original `accountUuid` to `~/.claude-buddy-original-uuid`, then replaces it in `~/.claude.json` with the target UUID
-2. **During session**: Background watcher re-patches every 2s (in case OAuth token refresh restores the original)
-3. **On exit**: The target UUID is **kept** (no auto-restore). Use `--recover-userid` to manually restore the original
+### brute.ts — UUID brute-force
 
-OAuth authentication uses tokens (stored in keychain), not `accountUuid`, so API calls are unaffected.
+CC's `/buddy` companion is generated deterministically from a hash of your `accountUuid` (or `userID` for API key users). The hash algorithm is:
+
+1. Concatenate `accountUuid` + salt (`friend-2026-401`)
+2. Hash with **wyhash** (Bun's built-in `Bun.hash()`)
+3. Use the hash to roll rarity, species, traits, and stats
+
+`brute.ts` generates random UUIDs in a loop, runs them through the same hash pipeline, and filters for your desired rarity/species/shiny combination. With `--best`, it searches all 100M UUIDs and keeps the top 10 by total stats.
+
+> **Important**: Must use **Bun** — Node.js uses FNV-1a instead of wyhash, so results won't match CC.
+
+### buddy-patch.sh — UUID swap
+
+The companion is tied to the `accountUuid` field in `~/.claude.json`. This script:
+
+1. **Backs up** the original `accountUuid` to `~/.claude-buddy-original-uuid` (only on first run, to avoid overwriting the real original)
+2. **Replaces** it with the target UUID via `sed`
+3. **Starts a background watcher** that re-patches every 2s — because OAuth token refresh can silently restore the original value
+4. **On exit**: kills the watcher but **keeps the patched UUID** (permanent by default)
+
+This is safe because OAuth authentication uses tokens stored in the system keychain, not the `accountUuid` field. The UUID is only used for companion generation, so swapping it doesn't affect API calls or authentication.
+
+To restore: `./buddy-patch.sh --recover-userid` reads the backup file and writes the original UUID back.
+
+### buddy-cn.sh — personality localization
+
+Companion personalities are stored as English text in the `companion.personality` field of `~/.claude.json`. This text controls how the companion "speaks" in the `/buddy` sidebar.
+
+The script:
+
+1. **Extracts** the current `personality` string from `~/.claude.json` using `grep`
+2. **Calls `claude -p --model haiku`** (single-shot, non-interactive mode) with a translation prompt — Claude translates the personality to Mandarin and appends a "must speak Chinese" directive
+3. **Writes back** the translated text using `awk`, replacing the `personality` field in-place
+
+Claude CLI in `-p` mode only processes text input/output — it does not read or write any files. All file operations are handled by the shell script itself. The change takes effect immediately without restarting CC.
 
 ## Species
 
@@ -156,5 +187,4 @@ duck, goose, blob, cat, dragon, octopus, owl, penguin, turtle, snail, ghost, axo
 
 ## Note
 
-- Must use **Bun** to run `brute.ts` — Node.js uses a different hash function (FNV-1a vs Bun's wyhash), so results won't match CC
 - The salt `friend-2026-401` is hardcoded in CC and may change in future versions

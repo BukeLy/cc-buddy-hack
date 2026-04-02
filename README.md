@@ -71,21 +71,40 @@ CC's `/buddy` system generates a companion pet based on a deterministic hash of 
 Shiny variants have an additional 1% chance on top of rarity.
 
 This project includes:
+- **`buddy-setup.sh`** — One-click interactive setup: search → choose → patch → localize
 - **`brute.ts`** — Brute-force script that generates random UUIDs and finds ones that produce desired rarities
-- **`buddy-patch.sh`** — Wrapper script that permanently swaps your `accountUuid` before launching CC (use `--recover-userid` to restore)
+- **`buddy-patch.sh`** — Permanently swap your `accountUuid` with background watcher (use `--recover-userid` to restore)
 - **`buddy-cn.sh`** — Localize your companion's personality to Chinese using Claude CLI
 
-## Prerequisites
-
-- [Bun](https://bun.sh/) runtime (required for exact hash matching with CC)
+## Quick Start
 
 ```bash
+# Install Bun (required)
 brew install oven-sh/bun/bun
+
+# Clone and run
+git clone https://github.com/BukeLy/cc-buddy-hack.git
+cd cc-buddy-hack
+./buddy-setup.sh
 ```
 
-## Usage
+The setup script will:
+1. Check dependencies (claude, bun)
+2. Search for Shiny Legendary UUIDs
+3. Let you pick one interactively
+4. Patch your `accountUuid` and clear old companion
+5. Optionally localize to Chinese
 
-### 1. Find a UUID with your desired rarity
+After setup, launch `claude` and run `/buddy` to hatch your new companion.
+
+To restore your original UUID:
+```bash
+./buddy-patch.sh --recover-userid
+```
+
+## Advanced Usage
+
+### Find UUIDs manually
 
 ```bash
 # Find legendary companions
@@ -103,37 +122,23 @@ bun brute.ts legendary dragon --shiny --best
 # Other rarities: common, uncommon, rare, epic, legendary
 ```
 
-### 2. Launch CC with the desired companion
+### Patch manually
 
 ```bash
-# Use the default UUID (edit buddy-patch.sh to set your preferred one)
-./buddy-patch.sh
+# Specify a UUID directly
+./buddy-patch.sh <uuid>
 
-# Or specify a UUID directly
-./buddy-patch.sh <uuid-from-step-1>
-
-# Use --renew to delete your current companion and force a re-hatch
+# With --renew to force re-hatch
 ./buddy-patch.sh <uuid> --renew
+
+# Restore original UUID
+./buddy-patch.sh --recover-userid
 ```
 
-### 3. Hatch your new companion
-
-Once CC starts, run `/buddy` to hatch a new companion with your chosen traits.
-
-### 4. Localize your companion to Chinese (optional)
+### Localize manually
 
 ```bash
 ./buddy-cn.sh
-```
-
-This calls `claude -p` to translate your companion's personality description to Mandarin and adds a directive to always speak in Chinese. Takes effect immediately.
-
-### 5. Restore your original UUID (optional)
-
-The patch is **permanent** — your `accountUuid` stays replaced after exiting CC. To restore:
-
-```bash
-./buddy-patch.sh --recover-userid
 ```
 
 ## How it works in detail

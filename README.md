@@ -12,6 +12,16 @@ Brute-force your CC `/buddy` companion to get the rarity, species, and traits yo
   <img src="buddys-pics/owl-glintcrumb.png" width="150" alt="Shiny Legendary Owl">
 </p>
 
+## Quick Start
+
+```bash
+brew install oven-sh/bun/bun && git clone https://github.com/BukeLy/cc-buddy-hack.git && cd cc-buddy-hack && ./buddy-setup.sh
+```
+
+One-click interactive setup: check dependencies → search Shiny Legendary UUIDs → pick one → patch → optional Chinese localization. Launch `claude` and run `/buddy` to hatch.
+
+To restore your original UUID: `./buddy-patch.sh --recover-userid`
+
 ## Example: Finding the Perfect Shiny Legendary Dragon
 
 ```
@@ -75,26 +85,6 @@ This project includes:
 - **`brute.ts`** — Brute-force script that generates random UUIDs and finds ones that produce desired rarities
 - **`buddy-patch.sh`** — Permanently swap your `accountUuid` with background watcher (use `--recover-userid` to restore)
 - **`buddy-cn.sh`** — Localize your companion's personality to Chinese using Claude CLI
-
-## Quick Start
-
-```bash
-brew install oven-sh/bun/bun && git clone https://github.com/BukeLy/cc-buddy-hack.git && cd cc-buddy-hack && ./buddy-setup.sh
-```
-
-The setup script will:
-1. Check dependencies (claude, bun)
-2. Search for Shiny Legendary UUIDs
-3. Let you pick one interactively
-4. Patch your `accountUuid` and clear old companion
-5. Optionally localize to Chinese
-
-After setup, launch `claude` and run `/buddy` to hatch your new companion.
-
-To restore your original UUID:
-```bash
-./buddy-patch.sh --recover-userid
-```
 
 ## Advanced Usage
 

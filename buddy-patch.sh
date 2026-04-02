@@ -3,7 +3,7 @@
 # 用法: ./buddy-patch.sh [目标ID] [选项]
 # 退出后保持替换（永久生效），使用 --recover-userid 手动还原
 
-set -euo pipefail
+set -eo pipefail
 
 CONFIG="$HOME/.claude.json"
 BACKUP_FILE="$HOME/.claude-buddy-original-uuid"
